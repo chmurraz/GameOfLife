@@ -15,15 +15,14 @@ private:
 	int topEdge;
 	int bottomEdge;
 	int cellCount;
-	void updateBlobBoundaries();
-	void updateBlobCount();
+	void updateBoundaries(std::vector<Cell>::iterator it);
 
 	std::vector<Cell> *cellsInGame;
 public:
 	Blob();
-	Blob(std::vector<Cell> *inputCells);
 	~Blob();
 	void AddCell(int x, int y);
+	int CountNeighbors(Cell *inputCell);
 	void PromptCell();
 	void UpdateBlob();
 };

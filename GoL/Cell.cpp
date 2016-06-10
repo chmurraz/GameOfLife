@@ -11,7 +11,7 @@ Cell::~Cell()
 {
 }
 
-Point2D Cell::getCoord()
+Point2D Cell::getPoint()
 {
 	return point;
 }

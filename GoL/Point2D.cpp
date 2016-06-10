@@ -32,3 +32,17 @@ void Point2D::sety(int yval)
 {
 	y = yval;
 }
+
+bool Point2D::Equal(Point2D other)
+{
+	if (this->getx() == other.getx() && this->gety() == other.gety())
+	{
+		return true;
+	}
+	return false;
+}
+
+int Point2D::TaxiDistance(Point2D other)
+{
+	return std::abs(this->getx() - other.getx()) + std::abs(this->gety() - other.gety());
+}

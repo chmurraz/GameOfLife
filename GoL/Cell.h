@@ -12,7 +12,7 @@ private:
 public:
 	Cell(Point2D pointval);
 	~Cell();
-	Point2D getCoord();
+	Point2D getPoint();
 	void setCoord(Point2D pval);
 	int getNeighborCount();
 	void setNeighborCount(int nval);

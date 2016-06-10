@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 class Point2D
 {
 private:
@@ -12,5 +13,8 @@ public:
 	int gety();
 	void setx(int xval);
 	void sety(int yval);
+
+	bool Equal(Point2D other);
+	int TaxiDistance(Point2D other);
 };
 

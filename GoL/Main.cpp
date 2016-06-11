@@ -17,6 +17,8 @@ using namespace std;
 int main()
 {
 	Blob myblob;
-	myblob.PromptCell();
+	myblob.AddLiveCell(1, 3);
+	myblob.AddLiveCell(-2, 4);
+	myblob.UpdateBlob();
 	return 0;
 }

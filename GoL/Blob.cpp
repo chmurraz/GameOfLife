@@ -1,24 +1,27 @@
 #include "Blob.h"
 
-void Blob::updateBoundaries(std::vector<Cell>::iterator it)
+void Blob::UpdateBoundaries()
 {
 	//	Update the borders of the blob.  Always keep the border size "one" larger than the actual live cells.
 	//	Hence the + 1 and -1 values at the end.  This is to account for new cells popping into life on the "edge"
 	//	of the blob
 
-	if (it->getPoint().getx() <= leftEdge)
-		leftEdge = it->getPoint().getx() - 1;
-	if (it->getPoint().getx() >= rightEdge)
-		leftEdge = it->getPoint().getx() + 1;
-	if (it->getPoint().gety() <= bottomEdge)
-		leftEdge = it->getPoint().gety() - 1;
-	if (it->getPoint().getx() >= rightEdge + 1)
-		leftEdge = it->getPoint().getx() + 1;
+	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
+	{
+		if (it->getPoint().getx() <= leftEdge)
+			leftEdge = it->getPoint().getx() - 1;
+		if (it->getPoint().getx() >= rightEdge)
+			rightEdge = it->getPoint().getx() + 1;
+		if (it->getPoint().gety() <= bottomEdge)
+			bottomEdge = it->getPoint().gety() - 1;
+		if (it->getPoint().gety() >= topEdge)
+			topEdge = it->getPoint().gety() + 1;
+	}
 }
 
 Blob::Blob()
 {
-	cellCount = 0;
+	liveCellCount = 0;
 	cellsInGame = new std::vector<Cell>;
 	leftEdge = INT_MAX;
 	rightEdge = INT_MIN;
@@ -32,11 +35,48 @@ Blob::~Blob()
 	cellsInGame = NULL;
 }
 
-void Blob::AddCell(int x, int y)
+void Blob::AddDeadCells()
+{
+	//	Don't add dead cells if there are no live cells.  Otherwise, there will be (INT_MAX - INT_MIN)^2 dead cells
+	if (liveCellCount > 0)
+	{
+		for (int x = leftEdge; x <= rightEdge; x++)
+		{
+			for (int y = bottomEdge; y <= topEdge; y++)
+			{
+				//	Create a new point, called "loopPoint" based off of the (x,y) values in the for loops
+				Point2D loopPoint(x, y);
+				
+				//	Check to see if this new point (loopPoint) matches any of the existing cells.  If yes, set bool to true
+				bool liveCellHere = false;
+				for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
+				{
+				
+					if (it->getPoint().Equal(loopPoint))
+					{
+						liveCellHere = true;
+					}
+				}
+
+				//	If the loopPoint doesn't match one of the liveCells, then create a new cell (and make sure it's dead)
+				if (!liveCellHere)
+				{
+					AddLiveCell(x, y);
+					cellsInGame->end()->setAlive(false);		// ->end() is a pointer to the end of the vector, needs to be dereferenced
+					
+				}
+			}
+		}
+	}
+}
+
+void Blob::AddLiveCell(int x, int y)
 {
 	Point2D point(x,y);
 	Cell cell(point);
 	cellsInGame->push_back(cell);
+	liveCellCount++;
+	UpdateBoundaries();
 }
 
 int Blob::CountNeighbors(Cell *inputCell)
@@ -69,25 +109,36 @@ void Blob::PromptCell()
 	std::cout << "Enter the y-coordinate of the cell:\n";
 	std::cin >> y;
 
-	AddCell(x, y);
+	AddLiveCell(x, y);
+}
+
+void Blob::ResetBlobStats()
+{	
+	//	Make sure to reset all vital statistics for each cell and the blob as a whole here...
+	//	Such as cellCount, neighborCount, etc.
+
+	liveCellCount = 0;
+	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
+	{
+		liveCellCount++;
+		it->setNeighborCount(0);
+	}
 }
 
 void Blob::UpdateBlob()
 {
-	//	Make sure to reset all vital statistics for each cell and the blob as a whole here...
-	//	Such as cellCount, neighborCount, etc.
-
-	cellCount = 0;
-	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
-	{
-		cellCount++;
-		updateBoundaries(it);
-		it->setNeighborCount(0);
-	}
+	//	Reset vital stats
+	ResetBlobStats();
 
 	//	Add any newly spawned cells to the blob
 
 	//	Remove any newly dying cells from the blob
+
+	//	Update the boundaries
+	UpdateBoundaries();
+
+	//	Fill the boundaries of the blob with dead cells (making sure to avoid the live cells)
+	AddDeadCells();
 
 	//	Draw the blob
 

@@ -14,16 +14,18 @@ private:
 	int rightEdge;
 	int topEdge;
 	int bottomEdge;
-	int cellCount;
-	void updateBoundaries(std::vector<Cell>::iterator it);
+	int liveCellCount;
+	void UpdateBoundaries();
 
 	std::vector<Cell> *cellsInGame;
 public:
 	Blob();
 	~Blob();
-	void AddCell(int x, int y);
+	void AddLiveCell(int x, int y);
+	void AddDeadCells();
 	int CountNeighbors(Cell *inputCell);
 	void PromptCell();
+	void ResetBlobStats();
 	void UpdateBlob();
 };
 

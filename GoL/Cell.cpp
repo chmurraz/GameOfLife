@@ -5,6 +5,8 @@
 Cell::Cell(Point2D pointval)
 {
 	point = pointval;
+	neighborCount = -1;
+	alive = true;
 }
 
 Cell::~Cell()

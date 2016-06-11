@@ -9,23 +9,29 @@
 **************************************************************************/
 
 #include <iostream>
-#include <cstdlib>		// Apparently needed for sytem("pause") lines in Visual Studio.
-#include "Blob.h"
+#include <cstdlib>		//	Apparently needed for sytem("pause") lines in Visual Studio.
+#include "Blob.h"	
+#include <Windows.h>	//	For Sleep
+#include "Dice.hpp"
+#include <ctime>
 
 using namespace std;
 
 int main()
 {
+	srand(time(0));
 	Blob myblob;
-	myblob.AddLiveCell(5,1);
-	//myblob.AddLiveCell(5,2);
-	//myblob.AddLiveCell(5, 3);
-	//myblob.AddLiveCell(-2, 0);
-	//myblob.AddLiveCell(-2, 1);
-	//myblob.AddLiveCell(-2, 2);
-	//myblob.AddLiveCell(-3, 2);
+	Dice mydice(20);
+	for (int i = 0; i <= 300; i++)
+	{
+		myblob.AddLiveCell(mydice.getRoll(), mydice.getRoll());
+	}
 
-	for (int i = 0; i <= 10;i++)
+	for (int i = 0; i <= 40; i++)
+	{
 		myblob.UpdateBlob();
+		Sleep(500);
+	}
+
 	return 0;
 }

@@ -115,13 +115,14 @@ void Blob::CountNeighbors()
 
 void Blob::Draw()
 {
+	system("cls");
+	std::vector<Cell> *drawable = new std::vector<Cell>;
 	if (liveCellCount > 0)
 	{
 		//	"Sort" the vector of cells, according to the "Bottom to Top" and "Left to Right" scheme in the Pointclass
 		std::sort(cellsInGame->begin(), cellsInGame->end());
 
 		//	Extract the live cells to draw... but only if they are in bounds
-		std::vector<Cell> *drawable = new std::vector<Cell>;
 		for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
 		{
 
@@ -135,32 +136,41 @@ void Blob::Draw()
 
 		unsigned count = 0;
 		int count2 = 1;
-		system("cls");
-		for (int y = plotmin.gety(); y <= plotmax.gety(); y++)
+
+		if (drawable->size()>0)
 		{
-
-			for (int x = plotmin.getx(); x <= plotmax.getx(); x++)
+			for (int y = plotmin.gety(); y <= plotmax.gety(); y++)
 			{
-				Point2D testPoint(x, y);
 
-				if (drawable->at(count).getPoint().Equal(testPoint) && count < drawable->size())
+				for (int x = plotmin.getx(); x <= plotmax.getx(); x++)
 				{
-					count++;
-					std::cout << "A";
-					if (count == drawable->size())
-						count--;
+					Point2D testPoint(x, y);
+
+					if (drawable->at(count).getPoint().Equal(testPoint) && count < drawable->size())
+					{
+						count++;
+						std::cout << "A";
+						if (count == drawable->size())
+							count--;
+					}
+					else
+						std::cout << " ";
+					if (count2 % plotmax.getx() == 0)
+						std::cout << "\n";
+					count2++;
 				}
-				else
-					std::cout << " ";
-				if (count2 % plotmax.getx() == 0)
-					std::cout << "\n";
-				count2++;
 			}
 		}
 
-		delete drawable;
-		drawable = NULL;
 	}
+	if (liveCellCount <= 0)
+		std::cout << "All cells have died";
+	if (drawable->size() == 0 && liveCellCount > 0)
+		std::cout << "Some cells are alive, but none are visible in the current window";
+
+	delete drawable;
+	drawable = NULL;
+
 }
 
 void Blob::PromptCell()

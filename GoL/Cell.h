@@ -18,5 +18,8 @@ public:
 	void setNeighborCount(int nval);
 	bool getAlive();
 	void setAlive(bool val);
+
+	//	Operator overload of "<" to compare cells
+	bool operator<(const Cell& other);
 };
 

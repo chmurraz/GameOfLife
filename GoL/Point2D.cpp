@@ -42,7 +42,18 @@ bool Point2D::Equal(Point2D other)
 	return false;
 }
 
-int Point2D::TaxiDistance(Point2D other)
+int Point2D::NeighborDistance(Point2D other)
 {
-	return std::abs(this->getx() - other.getx()) + std::abs(this->gety() - other.gety());
+	int x = std::abs(this->getx() - other.getx());
+	int y = std::abs(this->gety() - other.gety());
+
+	return std::max(x,y);
+}
+
+bool Point2D::operator<(const Point2D & other)
+{
+	if (y != other.y)
+		return (y < other.y);
+	else
+		return (x < other.x);
 }

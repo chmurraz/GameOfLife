@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cmath>
+#include <cmath>			//	For std::abs
+#include <algorithm>		//	For std::max
 class Point2D
 {
 private:
@@ -15,6 +16,9 @@ public:
 	void sety(int yval);
 
 	bool Equal(Point2D other);
-	int TaxiDistance(Point2D other);
+	int NeighborDistance(Point2D other);
+
+	//	Operator overload of "<" to compare points
+	bool operator<(const Point2D& other);
 };
 

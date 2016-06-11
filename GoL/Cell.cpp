@@ -5,7 +5,7 @@
 Cell::Cell(Point2D pointval)
 {
 	point = pointval;
-	neighborCount = -1;
+	neighborCount = 0;
 	alive = true;
 }
 
@@ -41,4 +41,9 @@ bool Cell::getAlive()
 void Cell::setAlive(bool val)
 {
 	alive = val;
+}
+
+bool Cell::operator<(const Cell & other)
+{
+	return point < other.point;
 }

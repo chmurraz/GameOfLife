@@ -10,20 +10,16 @@
 class Blob
 {
 private:
-	int leftEdge;
-	int rightEdge;
-	int topEdge;
-	int bottomEdge;
-	int liveCellCount;
-	void UpdateBoundaries();
-
 	std::vector<Cell> *cellsInGame;
+	void BuildDeadCells();
+	int liveCellCount;
 public:
 	Blob();
 	~Blob();
+	void AddDeadCell(int x, int y);
 	void AddLiveCell(int x, int y);
-	void AddDeadCells();
-	int CountNeighbors(Cell *inputCell);
+	void CountNeighbors();
+	void Draw();
 	void PromptCell();
 	void ResetBlobStats();
 	void UpdateBlob();

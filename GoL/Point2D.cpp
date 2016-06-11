@@ -23,13 +23,9 @@ int Point2D::gety()
 	return y;
 }
 
-void Point2D::setx(int xval)
+void Point2D::setxy(int xval, int yval)
 {
 	x = xval;
-}
-
-void Point2D::sety(int yval)
-{
 	y = yval;
 }
 
@@ -56,4 +52,22 @@ bool Point2D::operator<(const Point2D & other)
 		return (y < other.y);
 	else
 		return (x < other.x);
+}
+
+bool Point2D::operator>(const Point2D & other)
+{
+	if (y != other.y)
+		return (y > other.y);
+	else
+		return (x > other.x);
+}
+
+bool Point2D::operator<=(const Point2D & other)
+{
+	return ((y <= other.y) && (x <= other.x));
+}
+
+bool Point2D::operator>=(const Point2D & other)
+{
+	return ((y >= other.y) && (x >= other.x));
 }

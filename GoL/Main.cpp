@@ -17,9 +17,15 @@ using namespace std;
 int main()
 {
 	Blob myblob;
-	myblob.AddLiveCell(0,0);
-	myblob.AddLiveCell(1,0);
-	myblob.AddLiveCell(1, 1);
-	myblob.UpdateBlob();
+	myblob.AddLiveCell(5,1);
+	//myblob.AddLiveCell(5,2);
+	//myblob.AddLiveCell(5, 3);
+	//myblob.AddLiveCell(-2, 0);
+	//myblob.AddLiveCell(-2, 1);
+	//myblob.AddLiveCell(-2, 2);
+	//myblob.AddLiveCell(-3, 2);
+
+	for (int i = 0; i <= 10;i++)
+		myblob.UpdateBlob();
 	return 0;
 }

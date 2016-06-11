@@ -12,13 +12,15 @@ public:
 	Point2D(int xval, int yval);
 	int getx();
 	int gety();
-	void setx(int xval);
-	void sety(int yval);
+	void setxy(int xval, int yval);
 
 	bool Equal(Point2D other);
 	int NeighborDistance(Point2D other);
 
 	//	Operator overload of "<" to compare points
 	bool operator<(const Point2D& other);
+	bool operator>(const Point2D& other);
+	bool operator<=(const Point2D& other);
+	bool operator>=(const Point2D& other);
 };
 

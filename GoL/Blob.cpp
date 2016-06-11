@@ -4,6 +4,8 @@ Blob::Blob()
 {
 	liveCellCount = 0;
 	cellsInGame = new std::vector<Cell>;
+	plotmin.setxy(0,0);
+	plotmax.setxy(50,20);
 }
 
 Blob::~Blob()
@@ -77,6 +79,17 @@ void Blob::AddLiveCell(int x, int y)
 	liveCellCount++;
 }
 
+void Blob::BirthDeath()
+{
+	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
+	{
+		if (it->getNeighborCount() <2 || it->getNeighborCount() > 3)
+			it->setAlive(false);
+		if (!it->getAlive() && it->getNeighborCount() == 3)
+			it->setAlive(true);
+	}
+}
+
 void Blob::CountNeighbors()
 {
 	for (std::vector<Cell>::iterator inputCell = cellsInGame->begin(); inputCell !=cellsInGame->end(); ++inputCell)
@@ -102,50 +115,52 @@ void Blob::CountNeighbors()
 
 void Blob::Draw()
 {
-	//	"Sort" the vector of cells, according to the "Bottom to Top" and "Left to Right" scheme in the Pointclass
-	std::sort(cellsInGame->begin(), cellsInGame->end());
-
-	//	Extract the live cells to draw
-
-	std::vector<Cell> *drawable = new std::vector<Cell>;
-	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
+	if (liveCellCount > 0)
 	{
-		if (it->getAlive())
+		//	"Sort" the vector of cells, according to the "Bottom to Top" and "Left to Right" scheme in the Pointclass
+		std::sort(cellsInGame->begin(), cellsInGame->end());
+
+		//	Extract the live cells to draw... but only if they are in bounds
+		std::vector<Cell> *drawable = new std::vector<Cell>;
+		for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
 		{
-			Point2D newPoint = it->getPoint();
-			Cell newCell(newPoint);
-			drawable->push_back(newCell);
-		}
-	}
 
-	unsigned count = 0;
-	int count2 = 1;
-	system("cls");
-	for (int x = 0; x <= 40; x++)
-	{
-
-	THIS DRAW FUNCTION ISN'WORKING yet'  Fix me
-		for (int y = 0; y <= 20; y++)
-		{
-			Point2D testPoint(x, y);
-
-			if (drawable->at(count).getPoint().Equal(testPoint) && count < drawable->size())
+			if (it->getAlive() && it->getPoint() >= plotmin && it->getPoint() <= plotmax)
 			{
-				count++;
-				std::cout << "A";
-				if (count == drawable->size())
-					count--;
+				Point2D newPoint = it->getPoint();
+				Cell newCell(newPoint);
+				drawable->push_back(newCell);
 			}
-			else
-				std::cout << "D";
-			if (count2 % 40 == 0)
-				std::cout << "\n";
-			count2++;
 		}
-	}
 
-	delete drawable;
-	drawable = NULL;
+		unsigned count = 0;
+		int count2 = 1;
+		system("cls");
+		for (int y = plotmin.gety(); y <= plotmax.gety(); y++)
+		{
+
+			for (int x = plotmin.getx(); x <= plotmax.getx(); x++)
+			{
+				Point2D testPoint(x, y);
+
+				if (drawable->at(count).getPoint().Equal(testPoint) && count < drawable->size())
+				{
+					count++;
+					std::cout << "A";
+					if (count == drawable->size())
+						count--;
+				}
+				else
+					std::cout << " ";
+				if (count2 % plotmax.getx() == 0)
+					std::cout << "\n";
+				count2++;
+			}
+		}
+
+		delete drawable;
+		drawable = NULL;
+	}
 }
 
 void Blob::PromptCell()
@@ -165,21 +180,26 @@ void Blob::ResetBlobStats()
 	//	Such as cellCount, neighborCount, etc.
 
 	liveCellCount = 0;
+	std::vector<Cell> *copy = new std::vector<Cell>;
 	for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
 	{
-		liveCellCount++;
+		if (it->getAlive())
+		{
+			liveCellCount++;
+			Point2D newPoint = it->getPoint();
+			Cell newCell(newPoint);
+			copy->push_back(newCell);
+		}
 		it->setNeighborCount(0);
 	}
+	delete cellsInGame;
+	cellsInGame = copy;
 }
 
 void Blob::UpdateBlob()
 {
 	//	Reset vital stats
 	ResetBlobStats();
-
-	//	Add any newly spawned cells to the blob
-
-	//	Remove any newly dying cells from the blob
 
 	//	Fill the boundaries of the blob with dead cells (making sure to avoid the live cells)
 	BuildDeadCells();
@@ -190,7 +210,6 @@ void Blob::UpdateBlob()
 	//	Calculate neighbors
 	CountNeighbors();
 
-	//	Set cells for execution
-
-	//	Set cells for birth
+	//	Add any newly spawned cells and remove dying cells from the blob
+	BirthDeath();
 }

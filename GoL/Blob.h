@@ -24,13 +24,13 @@ private:
 public:
 	Blob();
 	~Blob();
-	void AddDeadCell(int x, int y);
-	void AddLiveCell(int x, int y);
+	void AddLiveCell(Point2D point);
 	void BirthDeath();
 	void BuildGlider();
 	void BuildRandom(float density);
 	void CountNeighbors();
 	void Draw(bool printStats);
+	bool IsCellHere(Point2D point);
 	void PromptCell();
 	void ResetBlobStats();
 	bool Sorter(Cell a, Cell b);

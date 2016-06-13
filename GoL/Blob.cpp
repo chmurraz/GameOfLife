@@ -15,17 +15,21 @@ Blob::~Blob()
 	cellsInGame = NULL;
 }
 
-void Blob::AddDeadCell(int x, int y)
+void Blob::AddLiveCell(Point2D point)
 {
+	Cell cell(point);
+	cellsInGame->push_back(cell);
+	liveCellCount++;
 }
-
 
 void Blob::BuildDeadCells()
 {
 	//	Don't add dead cells if there are no live cells.
 	if (liveCellCount > 0)
 	{
-		//	Create a new vector to add the deadCells to, then copy it over at the end.  This is to keep the iterators separate
+		//	Create a new vector (cellsInGameCopy) to add the dead cells to, then copy it over at the end.  This is to keep the iterators separate.
+		//	Otherwise, iterating over the original vector (cellsInGame) while, at the same time, adding dead cells to it, causes iterator errors.
+
 		std::vector<Cell> *cellsInGameCopy = new std::vector<Cell>;
 		for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
 		{
@@ -46,20 +50,14 @@ void Blob::BuildDeadCells()
 				for (int y = centerPoint.gety() - 1; y <= centerPoint.gety() + 1; y++)
 				{
 					//	Search the list of cells.  Check for a matching (x,y) ... doesn't matter if it's alive or dead
-					bool cellHere = false;
-					Point2D checkMatchPoint(x, y);
-					for (std::vector<Cell>::iterator it2 = cellsInGame->begin(); it2 != cellsInGame->end(); ++it2)
-					{
-						if (it2->getPoint().Equal(checkMatchPoint))
-							cellHere = true;
-					}
-					if (!cellHere)
+					Point2D testPoint(x, y);
+					if (!this->IsCellHere(testPoint))
 					{
 						//	Create a new cell at this (x,y) location
 						//	push_back onto the vector of cellsInGame
 						//	make sure this cell is dead
 
-						Cell newCell(checkMatchPoint);
+						Cell newCell(testPoint);
 						cellsInGame->push_back(newCell);
 						cellsInGame->back().setAlive(false);
 					}
@@ -70,14 +68,6 @@ void Blob::BuildDeadCells()
 		delete cellsInGameCopy;
 		cellsInGameCopy = NULL;
 	}
-}
-
-void Blob::AddLiveCell(int x, int y)
-{
-	Point2D point(x,y);
-	Cell cell(point);
-	cellsInGame->push_back(cell);
-	liveCellCount++;
 }
 
 void Blob::BirthDeath()
@@ -96,11 +86,11 @@ void Blob::BuildGlider()
 	int xshift = 10;
 	int yshift = 20;
 
-	this->AddLiveCell(0 + xshift, 0 + yshift);
-	this->AddLiveCell(1 + xshift, 0 + yshift);
-	this->AddLiveCell(1 + xshift, 2 + yshift);
-	this->AddLiveCell(2 + xshift, 0 + yshift);
-	this->AddLiveCell(2 + xshift, 1 + yshift);
+	this->AddLiveCell(Point2D(0 + xshift, 0 + yshift));
+	this->AddLiveCell(Point2D(1 + xshift, 0 + yshift));
+	this->AddLiveCell(Point2D(1 + xshift, 2 + yshift));
+	this->AddLiveCell(Point2D(2 + xshift, 0 + yshift));
+	this->AddLiveCell(Point2D(2 + xshift, 1 + yshift));
 }
 
 void Blob::BuildRandom(float density)
@@ -114,9 +104,16 @@ void Blob::BuildRandom(float density)
 
 	Dice myXDice(plotmax.getx());
 	Dice myYDice(plotmax.gety());
+
+	Point2D randomPoint;
 	for (int i = 0; i <= count; i++)
 	{
-	this->AddLiveCell(myXDice.getRoll(), myYDice.getRoll());
+		do
+		{
+			randomPoint.setxy(myXDice.getRoll(), myYDice.getRoll());
+		} while (this->IsCellHere(randomPoint));
+
+	this->AddLiveCell(randomPoint);
 	}
 }
 
@@ -186,14 +183,7 @@ void Blob::Draw(bool printStats)
 							count--;
 					}
 					else
-						std::cout << " ";
-
-					//	DEBUG PRINT TO SCREEN INFORMATION
-					if (printStats)
-					{
-						//std::string outputstring = "age is: " + age;
-						//OutputDebugString(outputstring);
-					}
+						std::cout << "D";
 
 					if (x % (plotmax.getx()) == 0 && x != 0)
 						std::cout << "\n";
@@ -208,9 +198,28 @@ void Blob::Draw(bool printStats)
 	if (drawable->size() == 0 && liveCellCount > 0)
 		std::cout << "Some cells are alive, but none are visible in the current window";
 
+	//	DEBUG PRINT TO SCREEN INFORMATION
+	if (printStats)
+	{
+		std::cout << std::endl;
+		std::cout << "age is: " << age << "\n";
+		std::cout << "test";
+	}
+
 	delete drawable;
 	drawable = NULL;
 
+}
+
+bool Blob::IsCellHere(Point2D point)
+{
+	//	Search the list of cells.  Check for a matching (x,y) at "point" ... doesn't matter if it's alive or dead
+	for (std::vector<Cell>::iterator it2 = cellsInGame->begin(); it2 != cellsInGame->end(); ++it2)
+	{
+		if (it2->getPoint().Equal(point))
+			return true;
+	}
+	return false;
 }
 
 void Blob::PromptCell()
@@ -221,7 +230,7 @@ void Blob::PromptCell()
 	std::cout << "Enter the y-coordinate of the cell:\n";
 	std::cin >> y;
 
-	AddLiveCell(x, y);
+	AddLiveCell(Point2D(x, y));
 }
 
 void Blob::ResetBlobStats()

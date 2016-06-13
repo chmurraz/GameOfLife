@@ -19,7 +19,7 @@ int main()
 	Dice mydice(20);
 
 	myblob.BuildGlider();
-	myblob.BuildRandom(0.99);
+	myblob.BuildRandom(0.20);
 
 	for (int i = 0; i <= 500; i++)
 	{

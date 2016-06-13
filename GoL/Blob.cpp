@@ -183,7 +183,7 @@ void Blob::Draw(bool printStats)
 							count--;
 					}
 					else
-						std::cout << "D";
+						std::cout << " ";
 
 					if (x % (plotmax.getx()) == 0 && x != 0)
 						std::cout << "\n";
@@ -202,8 +202,9 @@ void Blob::Draw(bool printStats)
 	if (printStats)
 	{
 		std::cout << std::endl;
-		std::cout << "age is: " << age << "\n";
-		std::cout << "test";
+		std::cout << "Age of the blob is: " << age << "\n";
+		std::cout << "Number of living cells is: " << liveCellCount << "\n";
+		std::cout << "Number of cells being drawn in current window is: " << drawable->size() << "\n";
 	}
 
 	delete drawable;

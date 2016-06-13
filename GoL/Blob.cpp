@@ -6,6 +6,7 @@ Blob::Blob()
 	cellsInGame = new std::vector<Cell>;
 	plotmin.setxy(0,0);
 	plotmax.setxy(50,20);
+	age = 0;
 }
 
 Blob::~Blob()
@@ -90,6 +91,35 @@ void Blob::BirthDeath()
 	}
 }
 
+void Blob::BuildGlider()
+{
+	int xshift = 10;
+	int yshift = 20;
+
+	this->AddLiveCell(0 + xshift, 0 + yshift);
+	this->AddLiveCell(1 + xshift, 0 + yshift);
+	this->AddLiveCell(1 + xshift, 2 + yshift);
+	this->AddLiveCell(2 + xshift, 0 + yshift);
+	this->AddLiveCell(2 + xshift, 1 + yshift);
+}
+
+void Blob::BuildRandom(float density)
+{
+	if (density > 1.0)
+		density = 1.0;
+	if (density < 0.0)
+		density = 0.0;
+
+	int count = floor(density * plotmax.getx() * plotmax.gety());
+
+	Dice myXDice(plotmax.getx());
+	Dice myYDice(plotmax.gety());
+	for (int i = 0; i <= count; i++)
+	{
+	this->AddLiveCell(myXDice.getRoll(), myYDice.getRoll());
+	}
+}
+
 void Blob::CountNeighbors()
 {
 	for (std::vector<Cell>::iterator inputCell = cellsInGame->begin(); inputCell !=cellsInGame->end(); ++inputCell)
@@ -113,7 +143,7 @@ void Blob::CountNeighbors()
 	}
 }
 
-void Blob::Draw()
+void Blob::Draw(bool printStats)
 {
 	system("cls");
 	std::vector<Cell> *drawable = new std::vector<Cell>;
@@ -121,6 +151,8 @@ void Blob::Draw()
 	{
 		//	"Sort" the vector of cells, according to the "Bottom to Top" and "Left to Right" scheme in the Pointclass
 		std::sort(cellsInGame->begin(), cellsInGame->end());
+		//	Reverse the order
+		std::reverse(cellsInGame->begin(), cellsInGame->end());
 
 		//	Extract the live cells to draw... but only if they are in bounds
 		for (std::vector<Cell>::iterator it = cellsInGame->begin(); it != cellsInGame->end(); ++it)
@@ -139,7 +171,7 @@ void Blob::Draw()
 
 		if (drawable->size()>0)
 		{
-			for (int y = plotmin.gety(); y <= plotmax.gety(); y++)
+			for (int y = plotmax.gety(); y >= plotmin.gety(); y--)
 			{
 
 				for (int x = plotmin.getx(); x <= plotmax.getx(); x++)
@@ -149,13 +181,21 @@ void Blob::Draw()
 					if (drawable->at(count).getPoint().Equal(testPoint) && count < drawable->size())
 					{
 						count++;
-						std::cout << "A";
+						std::cout << "*";
 						if (count == drawable->size())
 							count--;
 					}
 					else
 						std::cout << " ";
-					if (count2 % plotmax.getx() == 0)
+
+					//	DEBUG PRINT TO SCREEN INFORMATION
+					if (printStats)
+					{
+						if (y == plotmax.gety() && x == plotmin.getx())
+							std::cout << "age: " << age;
+					}
+
+					if (x % (plotmax.getx()) == 0 && x != 0)
 						std::cout << "\n";
 					count2++;
 				}
@@ -206,6 +246,11 @@ void Blob::ResetBlobStats()
 	cellsInGame = copy;
 }
 
+bool Blob::Sorter(Cell a, Cell b)
+{
+	return a<b;
+}
+
 void Blob::UpdateBlob()
 {
 	//	Reset vital stats
@@ -215,11 +260,14 @@ void Blob::UpdateBlob()
 	BuildDeadCells();
 
 	//	Draw the blob
-	Draw();
+	Draw(true);
 
 	//	Calculate neighbors
 	CountNeighbors();
 
 	//	Add any newly spawned cells and remove dying cells from the blob
 	BirthDeath();
+
+	//	Increment age
+	age++;
 }

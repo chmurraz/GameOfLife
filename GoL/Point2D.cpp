@@ -51,7 +51,7 @@ bool Point2D::operator<(const Point2D & other)
 	if (y != other.y)
 		return (y < other.y);
 	else
-		return (x < other.x);
+		return (x > other.x);
 }
 
 bool Point2D::operator>(const Point2D & other)
@@ -59,7 +59,7 @@ bool Point2D::operator>(const Point2D & other)
 	if (y != other.y)
 		return (y > other.y);
 	else
-		return (x > other.x);
+		return (x < other.x);
 }
 
 bool Point2D::operator<=(const Point2D & other)

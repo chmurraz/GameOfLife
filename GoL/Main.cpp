@@ -12,25 +12,21 @@
 #include <cstdlib>		//	Apparently needed for sytem("pause") lines in Visual Studio.
 #include "Blob.h"	
 #include <Windows.h>	//	For Sleep
-#include "Dice.hpp"
-#include <ctime>
 
-using namespace std;
 
 int main()
 {
 	srand(time(0));
 	Blob myblob;
 	Dice mydice(20);
-	for (int i = 0; i <= 300; i++)
-	{
-		myblob.AddLiveCell(mydice.getRoll(), mydice.getRoll());
-	}
 
-	for (int i = 0; i <= 40; i++)
+	myblob.BuildGlider();
+	myblob.BuildRandom(0.30);
+
+	for (int i = 0; i <= 500; i++)
 	{
 		myblob.UpdateBlob();
-		Sleep(500);
+		Sleep(100);
 	}
 
 	return 0;

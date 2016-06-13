@@ -9,6 +9,8 @@
 #include "Dice.hpp"
 #include <ctime>
 #include <math.h>
+#include <Windows.h>	//	For Sleep in Main and OutputDebugString in Blob
+#include <string>
 
 class Blob
 {

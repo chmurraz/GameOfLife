@@ -11,8 +11,6 @@
 #include <iostream>
 #include <cstdlib>		//	Apparently needed for sytem("pause") lines in Visual Studio.
 #include "Blob.h"	
-#include <Windows.h>	//	For Sleep
-
 
 int main()
 {
@@ -21,7 +19,7 @@ int main()
 	Dice mydice(20);
 
 	myblob.BuildGlider();
-	myblob.BuildRandom(0.30);
+	myblob.BuildRandom(0.99);
 
 	for (int i = 0; i <= 500; i++)
 	{

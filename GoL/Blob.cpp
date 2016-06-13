@@ -191,8 +191,8 @@ void Blob::Draw(bool printStats)
 					//	DEBUG PRINT TO SCREEN INFORMATION
 					if (printStats)
 					{
-						if (y == plotmax.gety() && x == plotmin.getx())
-							std::cout << "age: " << age;
+						//std::string outputstring = "age is: " + age;
+						//OutputDebugString(outputstring);
 					}
 
 					if (x % (plotmax.getx()) == 0 && x != 0)

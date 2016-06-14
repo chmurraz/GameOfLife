@@ -31,9 +31,7 @@ public:
 	void CountNeighbors();
 	void Draw(bool printStats);
 	bool IsCellHere(Point2D point);
-	void PromptCell();
 	void ResetBlobStats();
-	bool Sorter(Cell a, Cell b);
 	void UpdateBlob();
 };
 

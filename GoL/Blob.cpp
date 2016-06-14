@@ -223,21 +223,14 @@ bool Blob::IsCellHere(Point2D point)
 	return false;
 }
 
-void Blob::PromptCell()
-{
-	int x, y;
-	std::cout << "Enter the x-coordinate of the cell:\n";
-	std::cin >> x;
-	std::cout << "Enter the y-coordinate of the cell:\n";
-	std::cin >> y;
-
-	AddLiveCell(Point2D(x, y));
-}
-
 void Blob::ResetBlobStats()
 {	
 	//	Make sure to reset all vital statistics for each cell and the blob as a whole here...
 	//	Such as cellCount, neighborCount, etc.
+
+	//	A copy of the vector of "cellsInGame" is created and filled with living cells.  This is
+	//	done so that unnecessary "dead" cells included in the vector can be eliminatd.  A new
+	//	set of dead cells will be built later on during the update.
 
 	liveCellCount = 0;
 	std::vector<Cell> *copy = new std::vector<Cell>;
@@ -256,17 +249,12 @@ void Blob::ResetBlobStats()
 	cellsInGame = copy;
 }
 
-bool Blob::Sorter(Cell a, Cell b)
-{
-	return a<b;
-}
-
 void Blob::UpdateBlob()
 {
 	//	Reset vital stats
 	ResetBlobStats();
 
-	//	Fill the boundaries of the blob with dead cells (making sure to avoid the live cells)
+	//	Fill the blob with dead cells around every living cell (making sure to avoid any adjacent living cells)
 	BuildDeadCells();
 
 	//	Draw the blob

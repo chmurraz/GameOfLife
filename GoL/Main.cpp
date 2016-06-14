@@ -18,8 +18,12 @@ int main()
 	Blob myblob;
 	Dice mydice(20);
 
+	float x;
+
+	std::cout << "Enter a density (0 to 1.0)\n";
+	std::cin >> x;
 	//myblob.BuildGlider();
-	myblob.BuildRandom(0.40);
+	myblob.BuildRandom(x);
 
 	for (int i = 0; i <= 500; i++)
 	{
